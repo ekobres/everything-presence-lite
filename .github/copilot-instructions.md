@@ -1,0 +1,22 @@
+# Copilot Instructions for this repo
+
+- Purpose: ESPHome firmware packages for the Everything Presence Lite (ESP32 + mmWave presence + illuminance, optional CO₂), targeting Home Assistant.
+- Entry points: flashable YAMLs in repo root (e.g., `everything-presence-lite-ha.yaml`, `...-co2.yaml`, `...-no-ble.yaml`, `...-ld2410.yaml`, `...-mr24hpc1.yaml`, `...-sen0395.yaml`, `...-sen0609.yaml`, plus no-ble and co2 variants). Each one composes `packages:` from `common/`.
+- Base package: `common/everything-presence-lite-base.yaml` sets ESP-IDF target `esp32dev`, logger, Wi-Fi, Improv, dual OTA (`esphome` + `http_request`), BH1750 illuminance with a user-adjustable offset number, status LED, flash button multi-click for factory reset. Substitutions used across variants: `name`, `friendly_name`, `illuminance_update_interval`, `hidden_ssid`, `log_level`.
+- Bluetooth: `common/bluetooth-base.yaml` enables `esp32_ble_tracker`, `bluetooth_proxy`, and `esp32_improv`. Use `*-no-ble*.yaml` when Wi-Fi stability is preferred or BLE proxy is unneeded.
+- Optional module: CO₂ add-on (`common/modules/co2.yaml`) adds SCD4x on `i2c` bus_b with `calibrate_co2_value` service, `set_ambient_pressure` action, and a “Calibrate CO2” button. Present in `*-co2*.yaml` variants.
+- Default mmWave sensor: LD2450 (`common/ld2450-base.yaml`) is large and custom. Key points:
+  - UART 256000 on GPIO16/17; on boot it triggers firmware query and clears zone states.
+  - Extensive `globals` + `interval` + big `lambda` do multi-target parsing, polygon/rectangular zones, occupancy masks, entry/exit hold logic, assumed presence timers, and optional extra entities. Avoid refactors that change data ordering; keep buffer sizes/constants intact.
+  - Config numbers for zones (`zone_1_*` … `zone_4_*`), entry zones, occupancy masks, installation angle, distance, exit threshold, hold times, and `extra_entities` depth. Template binary_sensors publish occupancy with delayed_off set from those numbers.
+  - Exposed switches/buttons: mmWave configuration mode, Bluetooth toggle, stale-target clearing, inverse mounting, polygon zones, reboot/factory reset; many diagnostic sensors (`target*_x/y`, `target*_distance/angle/speed/resolution`, zone counts, assumed_present state).
+- Alternate sensors:
+  - LD2410 (`common/ld2410-base.yaml`): uses built-in component; UART 256000; exposes occupancy/moving/still, GPIO occupancy output, many gate thresholds and config numbers, engineering mode, Bluetooth toggle.
+  - Seeed MR24HPC1 Lite (`common/seeed-mmwave-lite-base.yaml`): pulls external component `limengdu/mmwave-kit-external-components`; advanced_mode switch; motion/occupancy sensors; sensitivity/threshold numbers and scene select.
+  - DFRobot SEN0395 (`common/sen0395-base.yaml`) and SEN0609 (`common/sen0609-base.yaml`): UART commands wrapped in template switches/numbers for distance, latency, sensitivity; mmWave LED control writes UART then saves config; occupancy on GPIO19.
+- Update mechanism: each variant declares `update` via `http_request` pointing to a manifest URL under `https://everythingsmarthome.github.io/...`, and `dashboard_import` for ESPHome Dashboard (import_full_config=false).
+- Naming/HA conventions: entity names derive from `name` substitution; the included `epl-map.yml` card expects `sensor.everything_presence_lite_<id>_target_1_x/y` and numbered zones; keep target/zone entity IDs stable when editing.
+- Build/flash: use ESPHome (CLI or dashboard) with the chosen top-level YAML. Typical local checks: `esphome compile everything-presence-lite-ha.yaml` or `esphome run ...` to build/flash over USB. Ensure ESP-IDF toolchain is available (ESPHome handles automatically); CH340 driver may be needed for USB (see `static/updating.md`).
+- When adding a new variant, prefer composing existing packages (base + sensor + optional `bluetooth-base` + optional `modules/co2.yaml`) and mirror the `update` manifest and `dashboard_import` pattern.
+- Avoid blanket formatting of large YAMLs (especially `ld2450-base.yaml` lambdas) to prevent indentation-sensitive errors. Keep UART pin/baud settings aligned with hardware noted in each base file.
+- Docs live under `static/` (Jekyll site) with assembly, tuning, Home Assistant setup; keep user-facing instructions in sync when changing entities or options.

@@ -1,0 +1,23 @@
+substitutions:
+  name: "everything-presence-lite"
+  friendly_name: "Everything Presence Lite"
+  illuminance_update_interval: "2s"
+  hidden_ssid: "false"
+  log_level: ERROR
+  ld_tx_pin: GPIO21
+  ld_rx_pin: GPIO20
+
+update:
+  - platform: http_request
+    id: update_http_request
+    name: Everything Presence Lite Firmware
+    source: https://ekobres.github.io/everything-presence-lite/everything-presence-lite-ha-mini-no-ble-manifest.json
+    disabled_by_default: true
+
+dashboard_import:
+  package_import_url: github://ekobres/everything-presence-lite/everything-presence-lite-ha-mini-no-ble.yaml@feature/mini
+  import_full_config: false # or true
+
+packages:
+  device_base: !include common/everything-presence-lite-mini-base.yaml
+  ld2450_base: !include common/ld2450-base.yaml

@@ -4,7 +4,8 @@ substitutions:
   illuminance_update_interval: "2s"
   hidden_ssid: "false"
   log_level: DEBUG
-
+  ld_tx_pin: GPIO17
+  ld_rx_pin: GPIO16
 
   device_config:
     ethernet_enabled: false

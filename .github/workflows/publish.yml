@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      - feature/mini
     paths:
       - '**.yaml'
 
@@ -221,6 +222,28 @@ jobs:
       esphome_version: latest
       directory_name: everything-presence-lite-ha-mr24hpc1-no-ble-co2
 
+  publish-everything-presence-lite-ha-mini:
+    name: Publish Everything Presence Lite HA Mini
+    uses: ekobres/everything-presence-lite/.github/workflows/esphome-build.yml@feature/mini
+    with:
+      files: everything-presence-lite-ha-mini.yaml
+      name: Everything Presence Lite HA Mini
+      manifest_filename: everything-presence-lite-ha-mini-manifest.json
+      clean: false
+      esphome_version: latest
+      directory_name: everything-presence-lite-ha-mini
+
+  publish-everything-presence-lite-ha-mini-no-ble:
+    name: Publish Everything Presence Lite HA Mini No BLE
+    uses: ekobres/everything-presence-lite/.github/workflows/esphome-build.yml@feature/mini
+    with:
+      files: everything-presence-lite-ha-mini-no-ble.yaml
+      name: Everything Presence Lite HA Mini No BLE
+      manifest_filename: everything-presence-lite-ha-mini-no-ble-manifest.json
+      clean: false
+      esphome_version: latest
+      directory_name: everything-presence-lite-ha-mini-no-ble
+
   # Generate firmware index after all builds complete
   generate-firmware-index:
     name: Generate Firmware Index
@@ -246,7 +269,9 @@ jobs:
       - publish-everything-presence-lite-ha-sen0609-no-ble-co2
       - publish-everything-presence-lite-ha-mr24hpc1-co2
       - publish-everything-presence-lite-ha-mr24hpc1-no-ble-co2
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - publish-everything-presence-lite-ha-mini
+      - publish-everything-presence-lite-ha-mini-no-ble
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feature/mini')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

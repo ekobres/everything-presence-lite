@@ -1,0 +1,17 @@
+{
+  "name": "Everything Presence Lite Mini",
+  "version": "1.4.1-test",
+  "home_assistant_domain": "esphome",
+  "new_install_prompt_erase": false,
+  "builds": [
+    {
+      "chipFamily": "ESP32-C3",
+      "parts": [
+        {
+          "path": "https://ekobres.github.io/everything-presence-lite/everything-presence-lite-ha-mini/firmware.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}
