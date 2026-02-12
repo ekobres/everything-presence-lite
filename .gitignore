@@ -3,3 +3,5 @@
 Gemfile.lock
 _site
 .esphome/
+secrets.yaml
+*-local.yaml
