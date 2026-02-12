@@ -1,0 +1,36 @@
+esphome:
+  name: ${name}
+  comment: Everything Presence Lite
+  friendly_name: ${friendly_name}
+  name_add_mac_suffix: True
+  project:
+    name: EverythingSmartTechnology.Everything Presence Lite
+    version: "1.4.1"
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+logger:
+  level: ${log_level}
+
+api:
+
+ota:
+  - platform: esphome
+    id: ota_esphome
+  - platform: http_request
+    id: ota_http_request
+
+http_request:
+
+wifi:
+
+improv_serial:
+
+button:
+  - platform: restart
+    icon: mdi:power-cycle
+    name: "ESP Reboot"
+    entity_category: config
