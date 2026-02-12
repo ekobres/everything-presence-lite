@@ -1,0 +1,13 @@
+{
+  "chipFamily": "ESP32-C3",
+  "ota": {
+    "path": "everything-presence-lite-esp32c3.ota.bin",
+    "md5": "649768cbb6dc2c8b916a94216ad5c120"
+  },
+  "parts": [
+    {
+      "path": "everything-presence-lite-esp32c3.factory.bin",
+      "offset": 0
+    }
+  ]
+}
