@@ -26,12 +26,6 @@ ota:
 http_request:
 
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-  fast_connect: true
-  ap:
-    ssid: ${friendly_name} Fallback
-    password: "12345678"
 
 improv_serial:
 
